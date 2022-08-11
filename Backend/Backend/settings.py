@@ -48,6 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Backend.AnimalBloodDonationBE',
+    'Backend.auth'
 ]
 
 ROOT_URLCONF = 'Backend.urls'
