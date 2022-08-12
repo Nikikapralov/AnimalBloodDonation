@@ -19,5 +19,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     include('Backend.AnimalBloodDonationBE.urls'),
-    include('Backend.auth.urls')
+    include('Backend.auth.urls'),
+    path('api-auth/', include('rest_framework.urls'))
 ]
