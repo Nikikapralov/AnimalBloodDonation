@@ -1,12 +1,13 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 # Create your models here.
-
-from Backend.auth.models import CustomUser
+from Backend import settings
+from Backend.custom_auth.models import CustomUser
 
 
 class Owner(models.Model):
-    user_id_fk = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user_id_fk = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     middle_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
@@ -16,7 +17,7 @@ class Owner(models.Model):
 class Pet(models.Model):
     name = models.CharField(max_length=50, default="Animal")
     age = models.IntegerField()
-    photo = models.ImageField(upload_to="pet_images/")
+    photo = models.ImageField(upload_to="static/pet_images/")
     breed = models.CharField(max_length=50, default="Unknown")
     blood_type = models.CharField(max_length=10, default="Unknown")
     region = models.CharField(max_length=50, default="Not specified")
@@ -35,7 +36,7 @@ class Case(models.Model):
 
 class CaseImage(models.Model):
     case_id_fk = models.ForeignKey(Case, on_delete=models.CASCADE)
-    photo = models.ImageField(upload_to="case_images/")
+    photo = models.ImageField(upload_to="static/case_images/")
     is_deleted = models.BooleanField(default=False)
 
 
@@ -50,7 +51,7 @@ class Message(models.Model):
 
 
 class PrivateMessageTable(models.Model):
-    sender_id_fk = models.ForeignKey(Owner, on_delete=models.CASCADE)
-    recipient_id_fk = models.ForeignKey(Owner, on_delete=models.CASCADE)
+    sender_id_fk = models.ForeignKey(Owner, on_delete=models.CASCADE, related_name="sender")
+    recipient_id_fk = models.ForeignKey(Owner, on_delete=models.CASCADE, related_name="recipient")
     message_id_fk = models.ForeignKey(Message, on_delete=models.CASCADE)
 
