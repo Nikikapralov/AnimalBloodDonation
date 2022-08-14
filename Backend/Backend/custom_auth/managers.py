@@ -21,7 +21,7 @@ class CustomManager(UserManager):
         # Lookup the real model class from the global app registry so this
         # manager method can be used in migrations. This is fine because
         # managers are by definition working on the real model.
-        user = self.model(email=email, date_of_birth=date_of_birth)
+        user = self.model(email=email, date_of_birth=date_of_birth, **extra_fields)
         user.password = make_password(password)
         user.save(using=self._db)
         return user
@@ -33,6 +33,7 @@ class CustomManager(UserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
+
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError(_('Superuser must have is_staff=True.'))
