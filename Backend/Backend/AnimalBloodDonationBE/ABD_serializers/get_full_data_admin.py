@@ -100,6 +100,8 @@ class OwnerSerializer(DynamicFieldsModelSerializer):
         result = {}
         for table in message_table:
             data_dict = PrivateMessageTableSerializer(table).data
+            data_dict["sender"] = Owner.objects.get(pk=data_dict["sender"]).__str__()
+            data_dict["recipient"] = Owner.objects.get(pk=data_dict["recipient"]).__str__()
             result.update(data_dict)
 
         return result
