@@ -1,12 +1,14 @@
 from rest_framework import serializers
 
-from Backend.AnimalBloodDonationBE.models import Owner, PrivateMessageTable, Message, Comment, CaseImage, Case, Pet
+from Backend.AnimalBloodDonationBE.ABD_serializers.common import CaseImageSerializer, CommentSerializer,\
+    PrivateMessageTableSerializer
+from Backend.AnimalBloodDonationBE.models import Owner, PrivateMessageTable, Comment, CaseImage, Case, Pet
 from Backend.Serializers.DynamicFields import DynamicFieldsModelSerializer
 from Backend.custom_auth.models import CustomUser
 from Backend.custom_auth.serializers import CustomUserSerializer
 
 
-class PetSerializer(DynamicFieldsModelSerializer):
+class PetSerializerDeep(DynamicFieldsModelSerializer):
     cases = serializers.SerializerMethodField()
 
     class Meta:
@@ -15,12 +17,12 @@ class PetSerializer(DynamicFieldsModelSerializer):
 
     def get_cases(self, obj):
         case = Case.objects.filter(pet=obj.pk)
-        serializer = CaseSerializer(case, many=True)
+        serializer = CaseSerializerDeep(case, many=True)
         return serializer.data
 
 
 
-class CaseSerializer(DynamicFieldsModelSerializer):
+class CaseSerializerDeep(DynamicFieldsModelSerializer):
     case_images = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
 
@@ -35,46 +37,15 @@ class CaseSerializer(DynamicFieldsModelSerializer):
 
     def get_comments(self, obj):
         comments = Comment.objects.filter(case=obj.pk)
-        serializer = CommentSerializer(comments, many=True)
-        return serializer.data
+        serializer_data = CommentSerializer(comments, many=True).data[0]
+        sender = serializer_data["sender"]
+        sender_name = Owner.objects.get(pk=sender).__str__()
+        serializer_data["sender"] = sender_name
+        return serializer_data
 
 
 
-class CaseImageSerializer(DynamicFieldsModelSerializer):
-
-    class Meta:
-        model = CaseImage
-        exclude = ("is_deleted", )
-
-
-class CommentSerializer(DynamicFieldsModelSerializer):
-
-    class Meta:
-        model = Comment
-        exclude = ("is_deleted", )
-
-
-class MessageSerializer(DynamicFieldsModelSerializer):
-
-    class Meta:
-        model = Message
-        fields = "__all__"
-
-
-class PrivateMessageTableSerializer(DynamicFieldsModelSerializer):
-    message = serializers.SerializerMethodField()
-
-    class Meta:
-        model = PrivateMessageTable
-        fields = "__all__"
-
-    def get_message(self, obj):
-        private_message = Message.objects.get(pk=obj.pk)
-        serializer = MessageSerializer(private_message)
-        return serializer.data
-
-
-class OwnerSerializer(DynamicFieldsModelSerializer):
+class OwnerSerializerDeep(DynamicFieldsModelSerializer):
 
     pets = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
@@ -87,7 +58,7 @@ class OwnerSerializer(DynamicFieldsModelSerializer):
 
     def get_pets(self, obj):
         pets = Pet.objects.filter(owner=obj.pk)
-        serializer = PetSerializer(pets, many=True)
+        serializer = PetSerializerDeep(pets, many=True)
         return serializer.data
 
     def get_user(self, obj):
