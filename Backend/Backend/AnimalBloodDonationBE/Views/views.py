@@ -2,13 +2,10 @@
 # Create your views here.
 import rest_framework.generics as drf
 from django.http import Http404
-from rest_framework.permissions import IsAdminUser
 
-from Backend.AnimalBloodDonationBE.ABD_serializers.common import MessageSerializer
-from Backend.AnimalBloodDonationBE.ABD_serializers.get_full_data_admin import \
-    CaseImageSerializer, CommentSerializer, PrivateMessageTableSerializer, OwnerSerializerDeep, PetSerializerDeep, \
-    CaseSerializerDeep
-from Backend.AnimalBloodDonationBE.models import Owner, Pet, Case, CaseImage, Comment, Message, PrivateMessageTable
+from Backend.Serializers.ABD_serializers.get_full_data_admin import \
+    CaseImageSerializer, CommentSerializer, CaseSerializerDeep
+from Backend.AnimalBloodDonationBE.models import Case, CaseImage, Comment
 from Backend.Mixins.REST_mixins.dynamic_fields import DynamicFieldsHelper
 
 

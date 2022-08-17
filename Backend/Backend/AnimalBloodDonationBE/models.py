@@ -7,19 +7,29 @@ from Backend.custom_auth.models import CustomUser
 
 
 class Owner(models.Model):
+    """
+    Owner model with data for the corresponding user. Has a relation to their pets, comments and messages.
+    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     middle_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Str magic method.
+        @return: Returns an interpolated string of the whole Owner name or, their corresponding e-mail.
+        """
         return f"{self.first_name} {self.middle_name} {self.last_name}" if any([self.first_name,
                                                                                 self.last_name,
                                                                                 self.middle_name]) else str(self.user_id_fk)
 
 
 class Pet(models.Model):
+    """
+    Pet model with pet data. Has a relation to its owner and the cases its part of.
+    """
     name = models.CharField(max_length=50, default="Animal")
     age = models.IntegerField()
     photo = models.ImageField(upload_to="pet_images/")
@@ -30,7 +40,11 @@ class Pet(models.Model):
     is_deleted = models.BooleanField(default=False)
     owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Str magic method.
+        @return: Returns the name of the pet.
+        """
         return self.name
 
 
